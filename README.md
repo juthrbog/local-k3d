@@ -22,7 +22,7 @@ Tasks have aliases defined, but the commands in this readme will use the full ta
 
 ## Create a Cluster
 
-You can configure the k3d cluster using the appropriate k3d config file in [configs](./configs/).
+You can configure the k3d cluster using the appropriate k3d config file in the [configs dir](./configs/).
 The [.env](./.env) value `CLUSTER_NAME` is used to name the cluster and reference the k3d config.
 
 ```shell
@@ -43,7 +43,7 @@ task delete_all_clusters
 
 ## Install Raw k8s Manifests into Cluster
 
-Simply add your manifests to [manifests](./manifests/) then run.
+Simply add your manifests to the [manifests dir](./manifests/) then run.
 
 ```shell
 task apply_all_manifests
