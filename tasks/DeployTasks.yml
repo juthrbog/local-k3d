@@ -4,9 +4,20 @@ includes:
   installTasks: ./InstallTasks.yml
 
 tasks:
+  create-namespace:
+    internal: true
+    deps:
+      - :create-cluster
+    vars:
+      NAMESPACE: '{{default "dev" .NAMESPACE}}'
+    cmds:
+      - kubectl create namespace {{.NAMESPACE}}
+
   apply-all-manifests:
     aliases:
       - all-manifests
+    deps:
+      - :create-cluster
     cmds:
       - kubectl apply -f manifests/*
     requires:
@@ -14,13 +25,13 @@ tasks:
         - CLUSTER_NAME
     preconditions:
       - test -d manifests
-      - k3d cluster list $CLUSTER_NAME
 
   add-argo-helm-repo:
     internal: true
     aliases:
       - argo-helm
     deps:
+      - :create-cluster
       - installTasks:helm
     cmds:
       - helm repo add argo https://argoproj.github.io/argo-helm
@@ -31,10 +42,14 @@ tasks:
     aliases:
       - workflows
     deps:
+      - :create-cluster
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
-      - helm upgrade -i $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_WORKFLOWS_NAMESPACE
+      - helm upgrade -i -f values/argo-workflows-values.yaml $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
     requires:
       vars:
         - ARGO_WORKFLOWS_RELEASE_NAME
@@ -46,13 +61,34 @@ tasks:
     aliases:
       - events
     deps:
+      - :create-cluster
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
-      - helm upgrade -i $ARGO_EVENTS_RELEASE_NAME argo/argo-events
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_EVENTS_NAMESPACE
+      - helm upgrade -i -f values/argo-events-values.yaml $ARGO_EVENTS_RELEASE_NAME argo/argo-events
     requires:
       vars:
         - ARGO_EVENTS_RELEASE_NAME
     preconditions:
       - test -d values
       - test -f values/argo-events-values.yaml
+
+  argo-cd:
+    deps:
+      - :create-cluster
+      - installTasks:helm
+      - add-argo-helm-repo
+    cmds:
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_CD_NAMESPACE
+      - helm upgrade -i -f values/argo-cd-values.yaml $ARGO_CD_RELEASE_NAME argo/argo-cd
+    requires:
+      vars:
+        - ARGO_CD_RELEASE_NAME
+    preconditions:
+      - test -d values
+      - test -f values/argo-cd-values.yaml
