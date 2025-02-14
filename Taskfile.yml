@@ -1,5 +1,9 @@
 version: '3.41.0'
 
+includes:
+  installTasks: ./tasks/InstallTasks.yml
+  deployTasks: ./tasks/DeployTasks.yml
+
 set: [pipefail]
 shopt: [globstar]
 
@@ -7,58 +11,13 @@ dotenv:
   - '.env'
 
 tasks:
-  install_brew:
-    aliases:
-      - brew
-    cmds:
-      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    status:
-      - brew --version
-
-  install_orbstack:
-    aliases:
-      - orbstack
-    deps:
-      - install_brew
-    cmds:
-      - brew install orbstack
-    status:
-      - orb version
-      - docker --version
-
-  install_k3d:
-    aliases:
-      - k3d
-    cmds:
-      - curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-    status:
-      - k3d --version
-
-  install_kubectl:
-    aliases:
-      - kubectl
-    deps:
-      - install_brew
-    cmds:
-      - brew install kubectl
-    status:
-      - kubectl version
-
-  install_helm:
-    aliases:
-      - helm
-    cmds:
-      - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-    status:
-      - helm version
-
   create_cluster:
     aliases:
       - create
     deps:
-      - install_k3d
-      - install_orbstack
-      - install_kubectl
+      - installTasks:k3d
+      - installTasks:orbstack
+      - installTasks:kubectl
     cmds:
       - k3d cluster create $CLUSTER_NAME --config configs/k3d_config_$CLUSTER_NAME.yaml
       - echo $KUBECONFIG
@@ -72,17 +31,9 @@ tasks:
       - test -d configs
       - test -f configs/k3d_config_$CLUSTER_NAME.yaml
 
-  apply_all_manifests:
-    aliases:
-      - all_manifests
-    deps:
-      - create_cluster
-    cmds:
-      - kubectl apply -f manifests/*
-    preconditions:
-      - test -d manifests
-
   delete_cluster:
+    aliases:
+      - delete
     prompt: You're about to delete the '{{.CLUSTER_NAME}}' k3d cluster... Do you want to continue?
     cmds:
       - k3d cluster delete $CLUSTER_NAME
@@ -99,29 +50,3 @@ tasks:
     requires:
       vars:
         - CLUSTER_NAME
-
-  add_argo_helm_repo:
-    aliases:
-      - argo_helm
-    deps:
-      - install_helm
-    cmds:
-      - helm repo add argo https://argoproj.github.io/argo-helm
-    status:
-      - helm repo list | grep -i argo
-
-  install_argo_workflows:
-    aliases:
-      - argo_workflows
-    deps:
-      - create_cluster
-      - install_helm
-      - add_argo_helm_repo
-    cmds:
-      - helm upgrade -i $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
-    requires:
-      vars:
-        - ARGO_WORKFLOWS_RELEASE_NAME
-    preconditions:
-      - test -d values
-      - test -f values/argo-workflows-values.yaml

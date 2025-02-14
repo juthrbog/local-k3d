@@ -1,0 +1,52 @@
+version: '3.41.0'
+
+tasks:
+  brew:
+    internal: true
+    aliases:
+      - brew
+    cmds:
+      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    status:
+      - brew --version
+
+  orbstack:
+    internal: true
+    aliases:
+      - orbstack
+    deps:
+      - installTasks:brew
+    cmds:
+      - brew install orbstack
+    status:
+      - orb version
+      - docker --version
+
+  k3d:
+    internal: true
+    aliases:
+      - k3d
+    cmds:
+      - curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+    status:
+      - k3d --version
+
+  kubectl:
+    internal: true
+    aliases:
+      - kubectl
+    deps:
+      - installTasks:brew
+    cmds:
+      - brew install kubectl
+    status:
+      - kubectl version
+
+  helm:
+    internal: true
+    aliases:
+      - helm
+    cmds:
+      - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    status:
+      - helm version
