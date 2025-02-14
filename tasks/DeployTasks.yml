@@ -4,6 +4,15 @@ includes:
   installTasks: ./InstallTasks.yml
 
 tasks:
+  create-namespace:
+    internal: true
+    deps:
+      - :create-cluster
+    vars:
+      NAMESPACE: '{{default "dev" .NAMESPACE}}'
+    cmds:
+      - kubectl create namespace {{.NAMESPACE}}
+
   apply-all-manifests:
     aliases:
       - all-manifests
