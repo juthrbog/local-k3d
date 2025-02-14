@@ -7,6 +7,8 @@ tasks:
   apply-all-manifests:
     aliases:
       - all-manifests
+    deps:
+      - :create-cluster
     cmds:
       - kubectl apply -f manifests/*
     requires:
@@ -14,13 +16,13 @@ tasks:
         - CLUSTER_NAME
     preconditions:
       - test -d manifests
-      - k3d cluster list $CLUSTER_NAME
 
   add-argo-helm-repo:
     internal: true
     aliases:
       - argo-helm
     deps:
+      - :create-cluster
       - installTasks:helm
     cmds:
       - helm repo add argo https://argoproj.github.io/argo-helm
@@ -31,6 +33,7 @@ tasks:
     aliases:
       - workflows
     deps:
+      - :create-cluster
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
@@ -46,6 +49,7 @@ tasks:
     aliases:
       - events
     deps:
+      - :create-cluster
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
