@@ -41,3 +41,18 @@ tasks:
     preconditions:
       - test -d values
       - test -f values/argo-workflows-values.yaml
+
+  argo-events:
+    aliases:
+      - events
+    deps:
+      - installTasks:helm
+      - add-argo-helm-repo
+    cmds:
+      - helm upgrade -i $ARGO_EVENTS_RELEASE_NAME argo/argo-events
+    requires:
+      vars:
+        - ARGO_EVENTS_RELEASE_NAME
+    preconditions:
+      - test -d values
+      - test -f values/argo-events-values.yaml
