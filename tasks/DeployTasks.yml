@@ -46,7 +46,10 @@ tasks:
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
-      - helm upgrade -i $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_WORKFLOWS_NAMESPACE
+      - helm upgrade -i -f values/argo-workflows-values.yaml $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
     requires:
       vars:
         - ARGO_WORKFLOWS_RELEASE_NAME
@@ -62,7 +65,10 @@ tasks:
       - installTasks:helm
       - add-argo-helm-repo
     cmds:
-      - helm upgrade -i $ARGO_EVENTS_RELEASE_NAME argo/argo-events
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_EVENTS_NAMESPACE
+      - helm upgrade -i -f values/argo-events-values.yaml $ARGO_EVENTS_RELEASE_NAME argo/argo-events
     requires:
       vars:
         - ARGO_EVENTS_RELEASE_NAME
