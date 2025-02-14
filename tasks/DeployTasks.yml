@@ -75,3 +75,20 @@ tasks:
     preconditions:
       - test -d values
       - test -f values/argo-events-values.yaml
+
+  argo-cd:
+    deps:
+      - :create-cluster
+      - installTasks:helm
+      - add-argo-helm-repo
+    cmds:
+      - task: create-namespace
+        vars:
+          NAMESPACE: $ARGO_CD_NAMESPACE
+      - helm upgrade -i -f values/argo-cd-values.yaml $ARGO_CD_RELEASE_NAME argo/argo-cd
+    requires:
+      vars:
+        - ARGO_CD_RELEASE_NAME
+    preconditions:
+      - test -d values
+      - test -f values/argo-cd-values.yaml
