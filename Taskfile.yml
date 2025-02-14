@@ -11,7 +11,7 @@ dotenv:
   - '.env'
 
 tasks:
-  create_cluster:
+  create-cluster:
     aliases:
       - create
     deps:
@@ -31,7 +31,7 @@ tasks:
       - test -d configs
       - test -f configs/k3d_config_$CLUSTER_NAME.yaml
 
-  delete_cluster:
+  delete-cluster:
     aliases:
       - delete
     prompt: You're about to delete the '{{.CLUSTER_NAME}}' k3d cluster... Do you want to continue?
@@ -41,9 +41,9 @@ tasks:
       vars:
         - CLUSTER_NAME
 
-  delete_all_clusters:
+  delete-all-clusters:
     aliases:
-      - delete_all
+      - delete-all
     prompt: You're about to delete all of your k3d clusters... Do you want to continue?
     cmds:
       - k3d cluster delete --all

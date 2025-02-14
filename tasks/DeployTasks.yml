@@ -4,9 +4,9 @@ includes:
   installTasks: ./InstallTasks.yml
 
 tasks:
-  apply_all_manifests:
+  apply-all-manifests:
     aliases:
-      - all_manifests
+      - all-manifests
     cmds:
       - kubectl apply -f manifests/*
     requires:
@@ -16,10 +16,10 @@ tasks:
       - test -d manifests
       - k3d cluster list $CLUSTER_NAME
 
-  add_argo_helm_repo:
+  add-argo-helm-repo:
     internal: true
     aliases:
-      - argo_helm
+      - argo-helm
     deps:
       - installTasks:helm
     cmds:
@@ -27,12 +27,12 @@ tasks:
     status:
       - helm repo list | grep -i argo
 
-  argo_workflows:
+  argo-workflows:
     aliases:
       - workflows
     deps:
       - installTasks:helm
-      - add_argo_helm_repo
+      - add-argo-helm-repo
     cmds:
       - helm upgrade -i $ARGO_WORKFLOWS_RELEASE_NAME argo/argo-workflows
     requires:
