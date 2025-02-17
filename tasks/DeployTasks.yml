@@ -11,7 +11,7 @@ tasks:
     vars:
       NAMESPACE: '{{default "dev" .NAMESPACE}}'
     cmds:
-      - kubectl create namespace {{.NAMESPACE}}
+      - kubectl create namespace {{.NAMESPACE}} --dry-run=client -o yaml | kubectl apply -f -
 
   apply-all-manifests:
     aliases:
