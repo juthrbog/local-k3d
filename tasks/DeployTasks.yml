@@ -80,15 +80,22 @@ tasks:
     deps:
       - :create-cluster
       - installTasks:helm
+      - installTasks:argocd-cli
       - add-argo-helm-repo
     cmds:
       - task: create-namespace
         vars:
           NAMESPACE: $ARGO_CD_NAMESPACE
       - helm upgrade -i -f values/argo-cd-values.yaml $ARGO_CD_RELEASE_NAME argo/argo-cd
+      - echo "Here's the admin password for the ArgoCD UI..."
+      - argocd admin initial-password -n $ARGO_CD_NAMESPACE
+      - echo "You can port forward for easy access to the ArgoCD UI... You can access via https://localhost:8080 after running the following.."
+      - echo "kubectl port-forward svc/${ARGO_CD_RELEASE_NAME}-server -n $ARGO_CD_NAMESPACE 8080:443"
     requires:
       vars:
         - ARGO_CD_RELEASE_NAME
+    status:
+      - argocd --version
     preconditions:
       - test -d values
       - test -f values/argo-cd-values.yaml

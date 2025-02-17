@@ -49,4 +49,13 @@ tasks:
     cmds:
       - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
     status:
-      - helm version
+      - helm version      - helm version
+
+  argocd-cli:
+    internal: true
+    aliases:
+      - argocd
+    cmds:
+      - brew install argocd
+    status:
+      - argocd version
