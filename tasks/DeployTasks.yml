@@ -38,6 +38,18 @@ tasks:
     status:
       - helm repo list | grep -i argo
 
+  add-localstack-helm-repo:
+    internal: true
+    aliases:
+      - argo-helm
+    deps:
+      - :create-cluster
+      - installTasks:helm
+    cmds:
+      - helm repo add localstack-repo https://helm.localstack.cloud
+    status:
+      - helm repo list | grep -i localstack
+
   argo-workflows:
     aliases:
       - workflows
@@ -99,3 +111,22 @@ tasks:
     preconditions:
       - test -d values
       - test -f values/argo-cd-values.yaml
+
+  localstack:
+    aliases:
+      - localstack
+    deps:
+      - :create-cluster
+      - installTasks:helm
+      - add-localstack-helm-repo
+    cmds:
+      - task: create-namespace
+        vars:
+          NAMESPACE: $LOCALSTACK_NAMESPACE
+      - helm upgrade -i -f values/localstack-values.yaml $LOCALSTACK_RELEASE_NAME localstack-repo/localstack
+    requires:
+      vars:
+        - LOCALSTACK_RELEASE_NAME
+    preconditions:
+      - test -d values
+      - test -f values/localstack-values.yaml
