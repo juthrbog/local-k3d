@@ -69,3 +69,12 @@ tasks:
       - brew install argocd
     status:
       - argocd version
+
+  crossplane-cli:
+    aliases:
+      - crossplane
+    cmds:
+      - curl -sL "https://raw.githubusercontent.com/crossplane/crossplane/main/install.sh" | sh
+      - mv crossplane $HOME/.local/bin
+    status:
+      - crossplane -h
