@@ -38,18 +38,6 @@ tasks:
     status:
       - helm repo list | grep -i argo
 
-  add-localstack-helm-repo:
-    internal: true
-    aliases:
-      - argo-helm
-    deps:
-      - :create-cluster
-      - installTasks:helm
-    cmds:
-      - helm repo add localstack-repo https://helm.localstack.cloud
-    status:
-      - helm repo list | grep -i localstack
-
   argo-workflows:
     aliases:
       - workflows
@@ -112,6 +100,18 @@ tasks:
       - test -d values
       - test -f values/argo-cd-values.yaml
 
+  add-localstack-helm-repo:
+    internal: true
+    aliases:
+      - argo-helm
+    deps:
+      - :create-cluster
+      - installTasks:helm
+    cmds:
+      - helm repo add localstack-repo https://helm.localstack.cloud
+    status:
+      - helm repo list | grep -i localstack
+
   localstack:
     aliases:
       - localstack
@@ -130,3 +130,34 @@ tasks:
     preconditions:
       - test -d values
       - test -f values/localstack-values.yaml
+
+  add-crossplane-helm-repo:
+    internal: true
+    aliases:
+      - crossplane-helm
+    deps:
+      - :create-cluster
+      - installTasks:helm
+    cmds:
+      - helm repo add crossplane-stable https://charts.crossplane.io/stable
+    status:
+      - helm repo list | grep -i crossplane
+
+  crossplane:
+    deps:
+      - :create-cluster
+      - installTasks:helm
+      - add-crossplane-helm-repo
+    cmds:
+      - task: create-namespace
+        vars:
+          NAMESPACE: $CROSSPLANE_NAMESPACE
+      - helm upgrade -i -f values/crossplane-values.yaml $CROSSPLANE_RELEASE_NAME crossplane-stable/crossplane
+    requires:
+      vars:
+        - CROSSPLANE_RELEASE_NAME
+    status:
+      - argocd --version
+    preconditions:
+      - test -d values
+      - test -f values/crossplane-values.yaml
