@@ -42,6 +42,16 @@ tasks:
     status:
       - kubectl version
 
+  kubescape:
+    internal: true
+    aliases:
+      - kubescape
+    cmds:
+      - curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+      - export PATH=$PATH:$HOME/.kubescape/bin
+    status:
+      - kubescape version
+
   helm:
     internal: true
     aliases:
@@ -49,7 +59,7 @@ tasks:
     cmds:
       - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
     status:
-      - helm version      - helm version
+      - helm version
 
   argocd-cli:
     internal: true
