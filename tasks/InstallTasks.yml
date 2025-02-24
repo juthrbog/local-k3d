@@ -47,8 +47,8 @@ tasks:
     aliases:
       - kubescape
     cmds:
-      - curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
-      - export PATH=$PATH:$HOME/.kubescape/bin
+      - curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash || true
+      - grep -qxF 'PATH=$PATH:$HOME/.kubescape/bin' $HOME/.bashrc || echo 'PATH=$PATH:$HOME/.kubescape/bin' >> $HOME/.bashrc
     status:
       - kubescape version
 
