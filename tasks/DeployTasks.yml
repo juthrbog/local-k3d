@@ -1,8 +1,5 @@
 version: '3.41.0'
 
-includes:
-  installTasks: ./InstallTasks.yml
-
 tasks:
   create-namespace:
     internal: true
@@ -32,7 +29,7 @@ tasks:
       - argo-helm
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
     cmds:
       - helm repo add argo https://argoproj.github.io/argo-helm
     status:
@@ -43,7 +40,7 @@ tasks:
       - workflows
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
       - add-argo-helm-repo
     cmds:
       - task: create-namespace
@@ -62,7 +59,7 @@ tasks:
       - events
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
       - add-argo-helm-repo
     cmds:
       - task: create-namespace
@@ -79,8 +76,8 @@ tasks:
   argo-cd:
     deps:
       - :create-cluster
-      - installTasks:helm
-      - installTasks:argocd-cli
+      - :installTasks:helm
+      - :installTasks:argocd-cli
       - add-argo-helm-repo
     cmds:
       - task: create-namespace
@@ -106,7 +103,7 @@ tasks:
       - argo-helm
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
     cmds:
       - helm repo add localstack-repo https://helm.localstack.cloud
     status:
@@ -115,7 +112,7 @@ tasks:
   localstack:
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
       - add-localstack-helm-repo
     cmds:
       - task: create-namespace
@@ -135,7 +132,7 @@ tasks:
       - crossplane-helm
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
     cmds:
       - helm repo add crossplane-stable https://charts.crossplane.io/stable
     status:
@@ -144,7 +141,7 @@ tasks:
   crossplane:
     deps:
       - :create-cluster
-      - installTasks:helm
+      - :installTasks:helm
       - add-crossplane-helm-repo
     cmds:
       - task: create-namespace
