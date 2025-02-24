@@ -3,6 +3,7 @@ version: '3.41.0'
 includes:
   installTasks: ./tasks/InstallTasks.yml
   deployTasks: ./tasks/DeployTasks.yml
+  crossplaneTasks: ./tasks/CrossplaneTasks.yml
 
 set: [pipefail]
 shopt: [globstar]
