@@ -38,6 +38,18 @@ tasks:
     status:
       - helm repo list | grep -i argo
 
+  add-localstack-helm-repo:
+    internal: true
+    aliases:
+      - argo-helm
+    deps:
+      - :create-cluster
+      - installTasks:helm
+    cmds:
+      - helm repo add localstack-repo https://helm.localstack.cloud
+    status:
+      - helm repo list | grep -i localstack
+
   argo-workflows:
     aliases:
       - workflows
@@ -100,21 +112,7 @@ tasks:
       - test -d values
       - test -f values/argo-cd-values.yaml
 
-  add-localstack-helm-repo:
-    internal: true
-    aliases:
-      - argo-helm
-    deps:
-      - :create-cluster
-      - installTasks:helm
-    cmds:
-      - helm repo add localstack-repo https://helm.localstack.cloud
-    status:
-      - helm repo list | grep -i localstack
-
   localstack:
-    aliases:
-      - localstack
     deps:
       - :create-cluster
       - installTasks:helm
