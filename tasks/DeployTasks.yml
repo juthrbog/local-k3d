@@ -154,8 +154,6 @@ tasks:
     requires:
       vars:
         - CROSSPLANE_RELEASE_NAME
-    status:
-      - argocd --version
     preconditions:
       - test -d values
       - test -f values/crossplane-values.yaml
