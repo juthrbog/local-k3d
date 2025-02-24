@@ -1,14 +1,11 @@
 version: '3.41.0'
 
-includes:
-  deployTasks: ./DeployTasks.yml
-
 tasks:
   deploy_all_providers:
     deps:
       - :create-cluster
-      - installTasks:kubectl
-      - deployTasks:crossplane
+      - :installTasks:kubectl
+      - :deployTasks:crossplane
     cmds:
       - kubectl apply -f configs/crossplane/*.yaml
     preconditions:
@@ -19,8 +16,8 @@ tasks:
       - s3_provider
     deps:
       - :create-cluster
-      - installTasks:kubectl
-      - deployTasks:crossplane
+      - :installTasks:kubectl
+      - :deployTasks:crossplane
     cmds:
       - kubectl apply -f configs/crossplane/aws-s3.yaml
     preconditions:
